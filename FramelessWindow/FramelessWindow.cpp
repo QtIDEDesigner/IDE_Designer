@@ -32,6 +32,8 @@ FramelessWindow::FramelessWindow(QWidget *parent) : QWidget(parent) {
     fileList = new FileList();
     // 右侧的编辑器
     plainTextEdit = new PlainTextEdit();
+    // 设置编辑器语法高亮
+    highlighter = new HighLighter(plainTextEdit -> document());
 
     // 测试用，显示一个文件名
     //setFileName("FileName.c");
