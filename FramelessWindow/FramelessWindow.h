@@ -21,6 +21,8 @@
 #include "PlainTextEdit.h"
 #include "FileList.h"
 #include"fileoperation.h"
+#include <stdio.h>
+#include <QMainWindow>
 // 主体窗口
 
 class FramelessWindowPrivate;
@@ -49,6 +51,9 @@ private:
 private slots:
     void maxScreen();
     void setFileName(QString);
+    void on_compileAction_triggered();
+    void on_saveFileAction_triggered();
+    void on_runAction_triggered();
 };
 
 #endif // FRAMELESSWINDOW_H
