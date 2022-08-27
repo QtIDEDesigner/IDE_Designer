@@ -23,6 +23,7 @@
 #include"fileoperation.h"
 #include <stdio.h>
 #include <QMainWindow>
+#include "Highlighter.h"
 // 主体窗口
 
 class FramelessWindowPrivate;
@@ -42,6 +43,7 @@ public:
     FileNameLabel * fileNameLabel; //当前文件名Label
 
     PlainTextEdit *plainTextEdit; //当前文本框
+    HighLighter *highlighter; // 语法高亮类
     FileList *fileList; //当前文件列表
 
 
