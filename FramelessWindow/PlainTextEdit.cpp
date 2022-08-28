@@ -7,6 +7,7 @@ PlainTextEdit::PlainTextEdit(QPlainTextEdit *parent) : QPlainTextEdit(parent)
 //                            "selection-background-color:rgb(228, 228, 228);selection-color:rgb(147, 115, 238);"
 //                            "padding: 20px;}");
     this->setFont(codeFont);
+    this->setLineWrapMode(LineWrapMode::NoWrap);
 
     //
     codeLineArea = new CodeLineArea(this);
