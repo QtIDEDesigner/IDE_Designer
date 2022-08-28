@@ -3,22 +3,26 @@
 
 // 文件列表部件类
 
-#include <QWidget>
-
-class FileList : public QWidget
+#include <QListWidget>
+#include <QScrollBar>
+#include <QFont>
+#include <QPainter>
+// class FileList : public QListWidget
+class FileList : public QListWidget
 {
     Q_OBJECT
 public:
-    explicit FileList(QWidget *parent = 0);
-private:
-
+    explicit FileList(QListWidget *parent = 0);
     QString currentFile;//当前文件
+
+private:
     QString shownName;//所展示文件名
     QString curPlainText;//当前编辑区文本
     bool curIsModified;//编辑区是否修改过
     bool MaybeSave();//可能需要保存文件
     void loadFile(const QString &filename);//加载文件
     void setCurrentFile(const QString &filename);//重置当前文件
+//    void paintEvent(QPaintEvent *event);
 signals:
     LoadData(QString Data);//从文件中获取的内容
     ClearText();//清屏

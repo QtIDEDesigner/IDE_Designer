@@ -12,7 +12,7 @@ class MenuButton : public QPushButton
 private:
     QFont menuFont;
 public:
-    MenuButton(QString);
+    explicit MenuButton(QString, QPushButton *parent = 0);
 };
 
 #endif // MENUBUTTON_H

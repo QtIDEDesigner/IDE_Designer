@@ -5,12 +5,13 @@
 
 #include <QLabel>
 #include <QFont>
+#include <QDebug>
 
 class FileNameLabel : public QLabel
 {
 public:
     QFont fileFont;
-    FileNameLabel(QString);
+    explicit FileNameLabel(QString, QLabel *parent = 0);
 };
 
 #endif // FILENAMELABEL_H

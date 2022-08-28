@@ -1,10 +1,14 @@
 #include "PlainTextEdit.h"
-#include <QtWidgets>
 
-// CodeHighlighting Constructor
-PlainTextEdit::PlainTextEdit(QWidget *parent) : QPlainTextEdit(parent)
+PlainTextEdit::PlainTextEdit(QPlainTextEdit *parent) : QPlainTextEdit(parent)
 {
+    QFont codeFont("Consolas", 12, 2);
+//    this->setStyleSheet("QPlainTextEdit{background-color:rgb(255,255,255);border:none; border-radius:20px;color:rgb(93, 93, 94);"
+//                            "selection-background-color:rgb(228, 228, 228);selection-color:rgb(147, 115, 238);"
+//                            "padding: 20px;}");
+    this->setFont(codeFont);
 
+    //
     codeLineArea = new CodeLineArea(this);
 
     connect(this, SIGNAL(blockCountChanged(int)), this, SLOT(updateCodeLineAreaWidth(int)));
@@ -13,7 +17,10 @@ PlainTextEdit::PlainTextEdit(QWidget *parent) : QPlainTextEdit(parent)
 
     updateCodeLineAreaWidth(0);
     highlightCurrentLine();
-
+}
+void PlainTextEdit::SendTextToFile(){//编辑发送文本内容至文件
+    QString Text=this->toPlainText();
+    emit(SendText(Text));
 }
 
 // codeLineAreaWidth Constructor
@@ -26,7 +33,7 @@ int PlainTextEdit::codeLineAreaWidth()
         ++digits;
     }
 
-    int space = 3 + fontMetrics().horizontalAdvance(QLatin1Char('9')) * digits;
+    int space = 3 + fontMetrics().width(QLatin1Char('9')) * digits;
 
     return space;
 }
@@ -67,9 +74,10 @@ void PlainTextEdit::highlightCurrentLine()
     if (!isReadOnly()) {
         QTextEdit::ExtraSelection selection;
 
-        QColor lineColor = QColor(Qt::gray).lighter(120);
+        QColor lightPurple;
+        lightPurple.setRgb(200, 200, 200);
 
-        selection.format.setBackground(lineColor);
+        selection.format.setBackground(lightPurple);
         selection.format.setProperty(QTextFormat::FullWidthSelection, true);
         selection.cursor = textCursor();
         selection.cursor.clearSelection();
@@ -83,8 +91,11 @@ void PlainTextEdit::highlightCurrentLine()
 void PlainTextEdit::codeLineAreaPaintEvent(QPaintEvent *event)
 {
     QPainter painter(codeLineArea);
-    painter.fillRect(event->rect(), Qt::lightGray);
-
+    QColor lightPurple;
+    lightPurple.setRgb(200, 200, 200);
+    QColor purple;
+    purple.setRgb(93, 93, 94);
+    painter.fillRect(event->rect(), lightPurple);
 
     QTextBlock block = firstVisibleBlock();
     int blockNumber = block.blockNumber();
@@ -94,9 +105,10 @@ void PlainTextEdit::codeLineAreaPaintEvent(QPaintEvent *event)
     while (block.isValid() && top <= event->rect().bottom()) {
         if (block.isVisible() && bottom >= event->rect().top()) {
             QString number = QString::number(blockNumber + 1);
-            painter.setPen(Qt::black);
+            painter.setFont(QFont("Consolas"));
+            painter.setPen(purple);
             painter.drawText(0, top, codeLineArea->width(), fontMetrics().height(),
-                             Qt::AlignRight, number);
+                             Qt::AlignCenter, number);
         }
 
         block = block.next();

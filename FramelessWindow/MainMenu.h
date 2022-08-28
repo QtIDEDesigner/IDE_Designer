@@ -11,7 +11,7 @@ class MainMenu : public QMenu
 private:
     QFont actionFont;
 public:
-    MainMenu();
+    explicit MainMenu(QMenu *parent = 0);
 };
 
 #endif // MAINMENU_H

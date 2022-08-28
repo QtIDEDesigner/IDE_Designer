@@ -1,4 +1,3 @@
-
 #ifndef PLAINTEXTEDIT_H
 #define PLAINTEXTEDIT_H
 
@@ -6,6 +5,10 @@
 
 #include <QFont>
 #include <QPlainTextEdit>
+#include <QPainter>
+#include <QTextBlock>
+
+
 QT_BEGIN_NAMESPACE
 class QPaintEvent;
 class QResizeEvent;
@@ -21,11 +24,14 @@ class PlainTextEdit : public QPlainTextEdit
     Q_OBJECT
 
 public:
-    PlainTextEdit(QWidget *parent = 0);
+    PlainTextEdit(QPlainTextEdit *parent = 0);
 
     void codeLineAreaPaintEvent(QPaintEvent *event);
     int codeLineAreaWidth();
-
+public slots:
+    void SendTextToFile();
+signals:
+    SendText(QString Text);//发送文本给文件保存函数
 protected:
     void resizeEvent(QResizeEvent *event) override;
 
@@ -59,3 +65,6 @@ private:
     PlainTextEdit *codeHighlighting;
 };
 #endif // PLAINTEXTEDIT_H
+
+
+

@@ -2,11 +2,86 @@
 #include<QMessageBox>
 #include<QFileDialog>
 #include<QTextStream>
-FileList::FileList(QWidget *parent) : QWidget(parent)
+FileList::FileList(QListWidget *parent) : QListWidget(parent)
 {
-    this->setStyleSheet("border:none; border-radius:20px;background-color:rgb(242, 239, 249);");
+    // setAttribute(Qt::WA_StyledBackground, true);
+    this->addItem("fileName");
+    this->addItem("fileName");
+    this->addItem("fileName");
+    this->addItem("fileName");
+    this->addItem("fileName");
+    this->addItem("fileName");
+    this->addItem("fileName");
+    this->addItem("fileName");
+    this->addItem("fileName");
+    this->addItem("fileName");
+    this->addItem("fileName");
+    this->addItem("fileName");
+    this->addItem("fileName");
+    this->addItem("fileName");
+    this->addItem("fileName");
+    this->addItem("fileName");
+    this->addItem("fileName");
+    this->addItem("fileName");
+    this->addItem("fileName");
+    this->addItem("fileName");
+    this->addItem("fileName");
+    this->addItem("fileName");
+    this->addItem("fileName");
+    this->addItem("fileName");
+    this->addItem("fileName");
+    this->addItem("fileName");
+    this->addItem("fileName");
+    this->addItem("fileName");
+    this->addItem("fileName");
+    this->addItem("fileName");
+    this->addItem("fileName");
+    this->addItem("fileName");
+    this->addItem("fileName");
+    this->addItem("fileName");
+    this->addItem("fileName");
+    this->addItem("fileName");
+    this->addItem("fileName");
+    this->addItem("fileName");
+    this->addItem("fileName");
+    this->addItem("fileName");
+
+    QFont fileListFont("Microsoft YaHei", 10, 50);
+
+//    this->setStyleSheet(
+//                "QListWidget {background-color:rgb(242, 239, 249);outline: 0px;padding: 10px;border: none;border-radius: 20px }"
+//                "QListWidget::item {border: none;border-radius: 15px;padding: 10px;color: rgb(93, 93, 94) }"
+//                "QListWidget::item:hover {background: rgb(187, 160, 250)}"
+//                "QListWidget::item:selected { background: rgb(147, 115, 238);color: white}"
+//                );
+
+//    this->verticalScrollBar()->setStyleSheet(
+//                "QScrollBar:vertical{background-color:none;width:12px;border-radius:6px}"
+//                "QScrollBar::handle:vertical{background:rgb(187, 160, 250);border-radius:6px;min-height:20;}"
+//                "QScrollBar::handle:vertical:hover{background:rgb(147, 115, 238);border-radius:6px;min-height:20;}"
+//                "QScrollBar::add-line:vertical{height:0px;width:0px;}"
+//                "QScrollBar::sub-line:vertical{height:0px;width:0px;}"
+//                "QScrollBar::add-page:vertical,QScrollBar::sub-page:vertical{width:0px;background:rgb(242, 239, 249);}"
+//                );
+//    this->horizontalScrollBar()->setStyleSheet(
+//                "QScrollBar:horizontal{background:none;height:12px;border-radius:6px}"
+//                "QScrollBar::handle:horizontal{background:rgb(187, 160, 250);border-radius:6px;min-width:20;}"
+//                "QScrollBar::handle:horizontal:hover{background:rgb(147, 115, 238);border-radius:6px;min-width:20;}"
+//                "QScrollBar::add-line:horizontal{height:0px;width:0px;}"
+//                "QScrollBar::sub-line:horizontal{height:0px;width:0px;}"
+//                "QScrollBar::add-page:horizontal,QScrollBar::sub-page:horizontal{height:0px;background:rgb(242, 239, 249);}"
+//                );
+    this->setFont(fileListFont);
 }
 
+//void FileList::paintEvent(QPaintEvent *event)
+//{
+//    Q_UNUSED(event);
+//    QStyleOption opt;
+//    opt.init(this);
+//    QPainter p(this);
+//    style()->drawPrimitive(QStyle::PE_Widget, &opt, &p, this);
+//}
 
 
 bool FileList::MaybeSave(){
@@ -16,6 +91,7 @@ bool FileList::MaybeSave(){
     const QMessageBox::StandardButton mesgbutton
             =QMessageBox::warning(this,tr("Warning"),tr("Not saved yet"),
                                   QMessageBox::Save|QMessageBox::Cancel);
+
     switch (mesgbutton) {
     case QMessageBox::Save:
         return Save();//保存

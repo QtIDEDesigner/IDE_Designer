@@ -31,7 +31,8 @@ SOURCES += \
     ScreenButton.cpp \
     FileNameLabel.cpp \
     PlainTextEdit.cpp \
-    FileList.cpp
+    FileList.cpp \
+    HighLighter.cpp
 
 HEADERS += \
         FramelessWindow.h \
@@ -42,4 +43,8 @@ HEADERS += \
     ScreenButton.h \
     FileNameLabel.h \
     PlainTextEdit.h \
-    FileList.h
+    FileList.h \
+    HighLighter.h
+
+#RESOURCES += \
+#    resources.qrc
