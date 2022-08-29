@@ -205,7 +205,8 @@ void FramelessWindow::on_compileAction_triggered()
 {
     //保存文件
     // this->on_saveFileAction_triggered();
-    fileList->Save();
+    if(fileList->currentFile==NULL)
+            fileList->Save();
     QString demo = fileList->currentFile;
     // 生成的目标文件名
     demo.replace(".c", "");
@@ -221,7 +222,8 @@ void FramelessWindow::on_runAction_triggered()
 {
     //保存文件
     // this->on_saveFileAction_triggered();
-    fileList->Save();
+    if(fileList->currentFile==NULL)
+        fileList->Save();
     QString demo = fileList->currentFile;
     // 生成的目标文件名
     demo.replace(".c", "");

@@ -20,12 +20,13 @@ PlainTextEdit::PlainTextEdit(QPlainTextEdit *parent) : QPlainTextEdit(parent)
 
     connect(this, SIGNAL(blockCountChanged(int)), this, SLOT(updateCodeLineAreaWidth(int)));
     connect(this, SIGNAL(updateRequest(QRect,int)), this, SLOT(updateCodeLineArea(QRect,int)));
-    connect(this, SIGNAL(cursorPositionChanged()), this, SLOT(highlightParentheses()));
-
-    updateCodeLineAreaWidth(0);
-    highlightCurrentLine();
-
+//    connect(this, SIGNAL(cursorPositionChanged()), this, SLOT(highlightParentheses()));
+//    connect(this,SIGNAL(cursorPositionChanged()),this,SLOT(highlightCurrentLine()));
     connect(this,SIGNAL(cursorPositionChanged()),this,SLOT(updateExtraSelection()));
+    updateCodeLineAreaWidth(0);
+    updateExtraSelection();
+
+
 }
 void PlainTextEdit::SendTextToFile(){//编辑发送文本内容至文件
     QString Text=this->toPlainText();
@@ -77,12 +78,12 @@ void PlainTextEdit::resizeEvent(QResizeEvent *e)
 
 // resizeEvent
 // cursorPositionChanged
-void PlainTextEdit::highlightCurrentLine()
+void PlainTextEdit::highlightCurrentLine(QList<QTextEdit::ExtraSelection>& extraSelections)
 {
-    QList<QTextEdit::ExtraSelection> extraSelections;
+    //QList<QTextEdit::ExtraSelection> extraSelections;
 
     if (!isReadOnly()) {
-        QTextEdit::ExtraSelection selection;
+        QTextEdit::ExtraSelection selection{};
 
         QColor lightPurple;
         lightPurple.setRgb(200, 200, 200);
@@ -94,7 +95,7 @@ void PlainTextEdit::highlightCurrentLine()
         extraSelections.append(selection);
     }
 
-    setExtraSelections(extraSelections);
+   // setExtraSelections(extraSelections);
 }
 
 
@@ -132,17 +133,16 @@ void PlainTextEdit::codeLineAreaPaintEvent(QPaintEvent *event)
 void PlainTextEdit::updateExtraSelection()
 {
     QList<QTextEdit::ExtraSelection> extra;
-
-
-
+    highlightCurrentLine(extra);
+    highlightParentheses(extra);
     setExtraSelections(extra);
 }
 
-void PlainTextEdit::highlightParentheses()
+void PlainTextEdit::highlightParentheses(QList<QTextEdit::ExtraSelection>& extraSelection)
 {
     auto currentSymbol = charUnderCursor();
     auto prevSymbol = charUnderCursor(-1);
-    QList<QTextEdit::ExtraSelection> extraSelection;
+   // QList<QTextEdit::ExtraSelection> extraSelection;
 
     for (auto& pair : parentheses)
     {
@@ -197,7 +197,7 @@ void PlainTextEdit::highlightParentheses()
         // Found
         if (counter == 0)
         {
-            QTextEdit::ExtraSelection selection;
+            QTextEdit::ExtraSelection selection{};
 
             auto directionEnum =
                  direction < 0 ?
@@ -235,7 +235,7 @@ void PlainTextEdit::highlightParentheses()
 
         break;
     }
-    setExtraSelections(extraSelection);
+    //setExtraSelections(extraSelection);
 }
 
 QChar PlainTextEdit::charUnderCursor(int offset) const
