@@ -330,6 +330,22 @@ void FramelessWindow::setPurple()
     plainTextEdit->setStyleSheet("QPlainTextEdit{background-color:rgb(255, 255, 255);border:none; border-radius:20px;color:rgb(93, 93, 94);"
                         "selection-background-color:rgb(242, 239, 249);selection-color:rgb(147, 115, 238);"
                         "padding: 20px;}");
+    plainTextEdit->verticalScrollBar()->setStyleSheet(
+                    "QScrollBar:vertical{background-color:none;width:12px;border-radius:6px}"
+                    "QScrollBar::handle:vertical{background:rgb(187, 160, 250);border-radius:6px;min-height:20;}"
+                    "QScrollBar::handle:vertical:hover{background:rgb(147, 115, 238);border-radius:6px;min-height:20;}"
+                    "QScrollBar::add-line:vertical{height:0px;width:0px;}"
+                    "QScrollBar::sub-line:vertical{height:0px;width:0px;}"
+                    "QScrollBar::add-page:vertical,QScrollBar::sub-page:vertical{width:0px;background:rgb(255, 255, 255);}"
+                    );
+    plainTextEdit->horizontalScrollBar()->setStyleSheet(
+                    "QScrollBar:horizontal{background:none;height:12px;border-radius:6px}"
+                    "QScrollBar::handle:horizontal{background:rgb(187, 160, 250);border-radius:6px;min-width:20;}"
+                    "QScrollBar::handle:horizontal:hover{background:rgb(147, 115, 238);border-radius:6px;min-width:20;}"
+                    "QScrollBar::add-line:horizontal{height:0px;width:0px;}"
+                    "QScrollBar::sub-line:horizontal{height:0px;width:0px;}"
+                    "QScrollBar::add-page:horizontal,QScrollBar::sub-page:horizontal{height:0px;background:rgb(255, 255, 255);}"
+                    );
 }
 
 void FramelessWindow::setDark()
@@ -394,6 +410,22 @@ void FramelessWindow::setDark()
     plainTextEdit->setStyleSheet("QPlainTextEdit{background-color:rgb(100, 100, 100);border:none; border-radius:20px;color:rgb(255, 255, 255);"
                         "selection-background-color:rgb(150,150,150);selection-color:rgb(75, 75, 75);"
                         "padding: 20px;}");
+    plainTextEdit->verticalScrollBar()->setStyleSheet(
+                    "QScrollBar:vertical{background-color:none;width:12px;border-radius:6px}"
+                    "QScrollBar::handle:vertical{background:rgb(110, 110, 110);border-radius:6px;min-height:20;}"
+                    "QScrollBar::handle:vertical:hover{background:rgb(75, 75, 75);border-radius:6px;min-height:20;}"
+                    "QScrollBar::add-line:vertical{height:0px;width:0px;}"
+                    "QScrollBar::sub-line:vertical{height:0px;width:0px;}"
+                    "QScrollBar::add-page:vertical,QScrollBar::sub-page:vertical{width:0px;background:rgb(100, 100, 100);}"
+                    );
+    plainTextEdit->horizontalScrollBar()->setStyleSheet(
+                    "QScrollBar:horizontal{background:none;height:12px;border-radius:6px}"
+                    "QScrollBar::handle:horizontal{background:rgb(110, 110, 110);border-radius:6px;min-width:20;}"
+                    "QScrollBar::handle:horizontal:hover{background:rgb(75, 75, 75);border-radius:6px;min-width:20;}"
+                    "QScrollBar::add-line:horizontal{height:0px;width:0px;}"
+                    "QScrollBar::sub-line:horizontal{height:0px;width:0px;}"
+                    "QScrollBar::add-page:horizontal,QScrollBar::sub-page:horizontal{height:0px;background:rgb(100, 100, 100);}"
+                    );
 }
 
 void FramelessWindow::setRed()
@@ -458,6 +490,22 @@ void FramelessWindow::setRed()
     plainTextEdit->setStyleSheet("QPlainTextEdit{background-color:rgb(255, 255, 255);border:none; border-radius:20px;color:rgb(93, 93, 94);"
                         "selection-background-color:rgb(250, 238, 239);selection-color:rgb(253, 104, 116);"
                         "padding: 20px;}");
+    plainTextEdit->verticalScrollBar()->setStyleSheet(
+                    "QScrollBar:vertical{background-color:none;width:12px;border-radius:6px}"
+                    "QScrollBar::handle:vertical{background:rgb(253, 142, 151);border-radius:6px;min-height:20;}"
+                    "QScrollBar::handle:vertical:hover{background:rgb(253, 104, 116);border-radius:6px;min-height:20;}"
+                    "QScrollBar::add-line:vertical{height:0px;width:0px;}"
+                    "QScrollBar::sub-line:vertical{height:0px;width:0px;}"
+                    "QScrollBar::add-page:vertical,QScrollBar::sub-page:vertical{width:0px;background:rgb(255, 255, 255);}"
+                    );
+    plainTextEdit->horizontalScrollBar()->setStyleSheet(
+                    "QScrollBar:horizontal{background:none;height:12px;border-radius:6px}"
+                    "QScrollBar::handle:horizontal{background:rgb(253, 142, 151);border-radius:6px;min-width:20;}"
+                    "QScrollBar::handle:horizontal:hover{background:rgb(253, 104, 116);border-radius:6px;min-width:20;}"
+                    "QScrollBar::add-line:horizontal{height:0px;width:0px;}"
+                    "QScrollBar::sub-line:horizontal{height:0px;width:0px;}"
+                    "QScrollBar::add-page:horizontal,QScrollBar::sub-page:horizontal{height:0px;background:rgb(255, 255, 255);}"
+                    );
 }
 
 void FramelessWindow::setOrange()
@@ -522,6 +570,23 @@ void FramelessWindow::setOrange()
     plainTextEdit->setStyleSheet("QPlainTextEdit{background-color:rgb(255, 255, 255);border:none; border-radius:20px;color:rgb(93, 93, 94);"
                         "selection-background-color:rgb(250, 241, 232);selection-color:rgb(250, 140, 22);"
                         "padding: 20px;}");
+    plainTextEdit->verticalScrollBar()->setStyleSheet(
+                    "QScrollBar:vertical{background-color:none;width:12px;border-radius:6px}"
+                    "QScrollBar::handle:vertical{background:rgb(250, 164, 117);border-radius:6px;min-height:20;}"
+                    "QScrollBar::handle:vertical:hover{background:rgb(250, 140, 22);border-radius:6px;min-height:20;}"
+                    "QScrollBar::add-line:vertical{height:0px;width:0px;}"
+                    "QScrollBar::sub-line:vertical{height:0px;width:0px;}"
+                    "QScrollBar::add-page:vertical,QScrollBar::sub-page:vertical{width:0px;background:rgb(255, 255, 255);}"
+                    );
+    plainTextEdit->horizontalScrollBar()->setStyleSheet(
+                    "QScrollBar:horizontal{background:none;height:12px;border-radius:6px}"
+                    "QScrollBar::handle:horizontal{background:rgb(250, 164, 117);border-radius:6px;min-width:20;}"
+                    "QScrollBar::handle:horizontal:hover{background:rgb(250, 140, 22);border-radius:6px;min-width:20;}"
+                    "QScrollBar::add-line:horizontal{height:0px;width:0px;}"
+                    "QScrollBar::sub-line:horizontal{height:0px;width:0px;}"
+                    "QScrollBar::add-page:horizontal,QScrollBar::sub-page:horizontal{height:0px;background:rgb(255, 255, 255);}"
+                    );
+
 }
 
 void FramelessWindow::setGreen()
@@ -586,6 +651,22 @@ void FramelessWindow::setGreen()
     plainTextEdit->setStyleSheet("QPlainTextEdit{background-color:rgb(255, 255, 255);border:none; border-radius:20px;color:rgb(93, 93, 94);"
                         "selection-background-color:rgb(230, 242, 239);selection-color:rgb(3, 158, 116);"
                         "padding: 20px;}");
+    plainTextEdit->verticalScrollBar()->setStyleSheet(
+                    "QScrollBar:vertical{background-color:none;width:12px;border-radius:6px}"
+                    "QScrollBar::handle:vertical{background:rgb(46, 178, 151);border-radius:6px;min-height:20;}"
+                    "QScrollBar::handle:vertical:hover{background:rgb(3, 158, 116);border-radius:6px;min-height:20;}"
+                    "QScrollBar::add-line:vertical{height:0px;width:0px;}"
+                    "QScrollBar::sub-line:vertical{height:0px;width:0px;}"
+                    "QScrollBar::add-page:vertical,QScrollBar::sub-page:vertical{width:0px;background:rgb(255, 255, 255);}"
+                    );
+    plainTextEdit->horizontalScrollBar()->setStyleSheet(
+                    "QScrollBar:horizontal{background:none;height:12px;border-radius:6px}"
+                    "QScrollBar::handle:horizontal{background:rgb(46, 178, 151);border-radius:6px;min-width:20;}"
+                    "QScrollBar::handle:horizontal:hover{background:rgb(3, 158, 116);border-radius:6px;min-width:20;}"
+                    "QScrollBar::add-line:horizontal{height:0px;width:0px;}"
+                    "QScrollBar::sub-line:horizontal{height:0px;width:0px;}"
+                    "QScrollBar::add-page:horizontal,QScrollBar::sub-page:horizontal{height:0px;background:rgb(255, 255, 255);}"
+                    );
 }
 
 void FramelessWindow::setBlue()
@@ -650,4 +731,21 @@ void FramelessWindow::setBlue()
     plainTextEdit->setStyleSheet("QPlainTextEdit{background-color:rgb(255, 255, 255);border:none; border-radius:20px;color:rgb(93, 93, 94);"
                         "selection-background-color:rgb(230, 245, 249);selection-color:rgb(0, 195, 238);"
                         "padding: 20px;}");
+
+    plainTextEdit->verticalScrollBar()->setStyleSheet(
+                    "QScrollBar:vertical{background-color:none;width:12px;border-radius:6px}"
+                    "QScrollBar::handle:vertical{background:rgb(104, 215, 243);border-radius:6px;min-height:20;}"
+                    "QScrollBar::handle:vertical:hover{background:rgb(0, 195, 238);border-radius:6px;min-height:20;}"
+                    "QScrollBar::add-line:vertical{height:0px;width:0px;}"
+                    "QScrollBar::sub-line:vertical{height:0px;width:0px;}"
+                    "QScrollBar::add-page:vertical,QScrollBar::sub-page:vertical{width:0px;background:rgb(255, 255, 255);}"
+                    );
+    plainTextEdit->horizontalScrollBar()->setStyleSheet(
+                    "QScrollBar:horizontal{background:none;height:12px;border-radius:6px}"
+                    "QScrollBar::handle:horizontal{background:rgb(104, 215, 243);border-radius:6px;min-width:20;}"
+                    "QScrollBar::handle:horizontal:hover{background:rgb(0, 195, 238);border-radius:6px;min-width:20;}"
+                    "QScrollBar::add-line:horizontal{height:0px;width:0px;}"
+                    "QScrollBar::sub-line:horizontal{height:0px;width:0px;}"
+                    "QScrollBar::add-page:horizontal,QScrollBar::sub-page:horizontal{height:0px;background:rgb(255, 255, 255);}"
+                    );
 }

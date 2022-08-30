@@ -33,7 +33,8 @@ SOURCES += \
     FileNameLabel.cpp \
     PlainTextEdit.cpp \
     FileList.cpp \
-    HighLighter.cpp
+    HighLighter.cpp \
+    comleter.cpp
 
 HEADERS += \
         FramelessWindow.h \
@@ -45,7 +46,8 @@ HEADERS += \
     FileNameLabel.h \
     PlainTextEdit.h \
     FileList.h \
-    HighLighter.h
+    HighLighter.h \
+    comleter.h
 
 #RESOURCES += \
 #    resources.qrc

@@ -8,7 +8,6 @@
 #include <QTextEdit>
 #include <QDesktopWidget>
 #include <QVBoxLayout>
-#include "Qsci/qsciscintilla.h"
 
 int main(int argc, char *argv[]) {
     QApplication app(argc, argv);

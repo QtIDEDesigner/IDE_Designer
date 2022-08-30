@@ -7,7 +7,7 @@
 #include <QPlainTextEdit>
 #include <QPainter>
 #include <QTextBlock>
-
+#include "comleter.h"
 
 QT_BEGIN_NAMESPACE
 class QPaintEvent;
@@ -29,6 +29,9 @@ public:
     void codeLineAreaPaintEvent(QPaintEvent *event);
 
     int codeLineAreaWidth();
+
+    void setUpCompleteList();
+
     //QList<QTextEdit::ExtraSelection> extra;
 public slots:
     void SendTextToFile();
@@ -36,6 +39,7 @@ signals:
     SendText(QString Text);//发送文本给文件保存函数
 protected:
     void resizeEvent(QResizeEvent *event) override;
+    void keyPressEvent(QKeyEvent *event) override;
 
 private slots:
     void updateCodeLineAreaWidth(int newBlockCount);
@@ -44,8 +48,14 @@ private slots:
     void highlightParentheses(QList<QTextEdit::ExtraSelection>&);
     QChar charUnderCursor(int offset=0)const;
     void updateExtraSelection();
+    void showCompleteWidget();
 private:
     QWidget *codeLineArea;
+    QStringList completeList;//储存自动填充的关键字
+    Comleter *completeWidget; //临时加载匹配的关键字
+    int completeState;
+    int getCompleteWidgetX();
+    QString getWordOfCursor();
 };
 
 // Code line Area & Width Definition
@@ -67,6 +77,11 @@ protected:
 
 private:
     PlainTextEdit *codeHighlighting;
+};
+enum CompleteState{
+  Ignore=0,
+  Showing=1,
+  Hide=2
 };
 #endif // PLAINTEXTEDIT_H
 

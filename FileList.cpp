@@ -5,46 +5,7 @@
 FileList::FileList(QListWidget *parent) : QListWidget(parent)
 {
     // setAttribute(Qt::WA_StyledBackground, true);
-    this->addItem("fileName");
-    this->addItem("fileName");
-    this->addItem("fileName");
-    this->addItem("fileName");
-    this->addItem("fileName");
-    this->addItem("fileName");
-    this->addItem("fileName");
-    this->addItem("fileName");
-    this->addItem("fileName");
-    this->addItem("fileName");
-    this->addItem("fileName");
-    this->addItem("fileName");
-    this->addItem("fileName");
-    this->addItem("fileName");
-    this->addItem("fileName");
-    this->addItem("fileName");
-    this->addItem("fileName");
-    this->addItem("fileName");
-    this->addItem("fileName");
-    this->addItem("fileName");
-    this->addItem("fileName");
-    this->addItem("fileName");
-    this->addItem("fileName");
-    this->addItem("fileName");
-    this->addItem("fileName");
-    this->addItem("fileName");
-    this->addItem("fileName");
-    this->addItem("fileName");
-    this->addItem("fileName");
-    this->addItem("fileName");
-    this->addItem("fileName");
-    this->addItem("fileName");
-    this->addItem("fileName");
-    this->addItem("fileName");
-    this->addItem("fileName");
-    this->addItem("fileName");
-    this->addItem("fileName");
-    this->addItem("fileName");
-    this->addItem("fileName");
-    this->addItem("fileName");
+
 
     QFont fileListFont("Microsoft YaHei", 10, 50);
 
