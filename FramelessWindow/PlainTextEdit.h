@@ -27,7 +27,9 @@ public:
     PlainTextEdit(QPlainTextEdit *parent = 0);
 
     void codeLineAreaPaintEvent(QPaintEvent *event);
+
     int codeLineAreaWidth();
+    //QList<QTextEdit::ExtraSelection> extra;
 public slots:
     void SendTextToFile();
 signals:
@@ -37,9 +39,11 @@ protected:
 
 private slots:
     void updateCodeLineAreaWidth(int newBlockCount);
-    void highlightCurrentLine();
+    void highlightCurrentLine(QList<QTextEdit::ExtraSelection>&);
     void updateCodeLineArea(const QRect &, int);
-
+    void highlightParentheses(QList<QTextEdit::ExtraSelection>&);
+    QChar charUnderCursor(int offset=0)const;
+    void updateExtraSelection();
 private:
     QWidget *codeLineArea;
 };

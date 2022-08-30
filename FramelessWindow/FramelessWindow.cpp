@@ -28,6 +28,14 @@ FramelessWindow::FramelessWindow(QWidget *parent) : QWidget(parent) {
     fileList = new FileList();
     // 右侧的编辑器
     plainTextEdit = new PlainTextEdit();
+    // 右侧的初始窗口
+    startWidget = new StartWidget();
+    connect(startWidget->newButton, &QPushButton::clicked, this, &FramelessWindow::newStart);
+    connect(startWidget->openButton, &QPushButton::clicked, this, &FramelessWindow::openStart);
+    // 运行结果回显
+    runTextEdit = new QPlainTextEdit();
+    runTextEdit->setFocusPolicy(Qt::NoFocus);
+//    runTextEdit->setTextInteractionFlags ( Qt::NoTextInteraction );
     // 设置编辑器语法高亮
     highlighter = new HighLighter(plainTextEdit -> document());
 
@@ -143,10 +151,17 @@ FramelessWindow::FramelessWindow(QWidget *parent) : QWidget(parent) {
     layout->addWidget(menuWidget);
 
 
+    // 右侧布局，包括编辑器和运行结果回显
+    runRegion = new QVBoxLayout();
+    runRegion->addWidget(startWidget);
+    runRegion->addWidget(runTextEdit);
+    runRegion->setStretch(0, 7);
+    runRegion->setStretch(1, 3);
+
     // 编辑区布局，包括文件列表和编辑器
     QHBoxLayout *editRegion = new QHBoxLayout();
     editRegion->addWidget(fileList);
-    editRegion->addWidget(plainTextEdit);
+    editRegion->addLayout(runRegion);
     editRegion->setStretch(0, 2);
     editRegion->setStretch(1, 8);
 
@@ -205,7 +220,8 @@ void FramelessWindow::on_compileAction_triggered()
 {
     //保存文件
     // this->on_saveFileAction_triggered();
-    fileList->Save();
+    if(fileList->currentFile==NULL)
+            fileList->Save();
     QString demo = fileList->currentFile;
     // 生成的目标文件名
     demo.replace(".c", "");
@@ -221,7 +237,8 @@ void FramelessWindow::on_runAction_triggered()
 {
     //保存文件
     // this->on_saveFileAction_triggered();
-    fileList->Save();
+    if(fileList->currentFile==NULL)
+        fileList->Save();
     QString demo = fileList->currentFile;
     // 生成的目标文件名
     demo.replace(".c", "");
@@ -266,15 +283,63 @@ void FramelessWindow::on_runAction_triggered()
 //    fclose(fp);
 //}
 
+void FramelessWindow::newStart()
+{
+    fileList->newStartFile();
+
+    //清空runRegion布局内的所有元素
+    QLayoutItem *child;
+     while ((child = runRegion->takeAt(0)) != 0)
+     {
+            //setParent为NULL，防止删除之后界面不消失
+            if(child->widget())
+            {
+                child->widget()->setParent(NULL);
+            }
+
+            delete child;
+     }
+
+     runRegion->addWidget(plainTextEdit);
+     runRegion->addWidget(runTextEdit);
+     runRegion->setStretch(0, 7);
+     runRegion->setStretch(1, 3);
+}
+
+void FramelessWindow::openStart()
+{
+
+    if (fileList->openStartFile())
+    {
+        //清空runRegion布局内的所有元素
+        QLayoutItem *child;
+         while ((child = runRegion->takeAt(0)) != 0)
+        {
+                //setParent为NULL，防止删除之后界面不消失
+                if(child->widget())
+                {
+                    child->widget()->setParent(NULL);
+                }
+
+                delete child;
+        }
+
+        runRegion->addWidget(plainTextEdit);
+        runRegion->addWidget(runTextEdit);
+        runRegion->setStretch(0, 7);
+        runRegion->setStretch(1, 3);
+    }
+}
+
 void FramelessWindow::setPurple()
 {
     menuWidget->setStyleSheet("border:none; border-radius:20px;background-color:rgb(147, 115, 238)");
 
     fileList->setStyleSheet(
-                    "QListWidget {background-color:rgb(242, 239, 249);outline: 0px;padding: 10px;border: none;border-radius: 20px }"
-                    "QListWidget::item {border: none;border-radius: 15px;padding: 10px;color: rgb(93, 93, 94) }"
-                    "QListWidget::item:hover {background: rgb(187, 160, 250)}"
-                    "QListWidget::item:selected { background: rgb(147, 115, 238);color: white}"
+                    "QTreeView {background-color:rgb(242, 239, 249);outline: 0px;padding: 10px;border: none;border-radius: 20px }"
+                    "QTreeView::item {border: none;border-radius: 15px;padding: 10px;color: rgb(93, 93, 94) }"
+                    "QTreeView::item:hover {background: rgb(187, 160, 250)}"
+                    "QTreeView::item:selected { background: rgb(147, 115, 238);color: white}"
                     );
 
     fileList->verticalScrollBar()->setStyleSheet(
@@ -344,6 +409,37 @@ void FramelessWindow::setPurple()
                     "QScrollBar::sub-line:horizontal{height:0px;width:0px;}"
                     "QScrollBar::add-page:horizontal,QScrollBar::sub-page:horizontal{height:0px;background:rgb(255, 255, 255);}"
                     );
+
+    startWidget->setStyleSheet("background-color:rgb(255, 255, 255);border:none; border-radius:20px;");
+
+    startWidget->newButton->setStyleSheet("QPushButton{background-color: rgb(147, 115, 238);color:rgb(255, 255, 255);}"
+                                          "QPushButton::hover{background-color: rgb(187, 160, 250)}"
+                                          "QPushButton::pressed{background-color: rgb(187, 160, 250)}");
+
+    startWidget->openButton->setStyleSheet("QPushButton{background-color: rgb(147, 115, 238);color:rgb(255, 255, 255);}"
+                                          "QPushButton::hover{background-color: rgb(187, 160, 250)}"
+                                          "QPushButton::pressed{background-color: rgb(187, 160, 250)}");
+
+
+    runTextEdit->setStyleSheet("QPlainTextEdit{background-color:rgb(255, 255, 255);border:none; border-radius:20px;color:rgb(93, 93, 94);"
+                        "selection-background-color:rgb(242, 239, 249);selection-color:rgb(147, 115, 238);"
+                        "padding: 20px;}");
+    runTextEdit->verticalScrollBar()->setStyleSheet(
+                    "QScrollBar:vertical{background-color:none;width:12px;border-radius:6px}"
+                    "QScrollBar::handle:vertical{background:rgb(187, 160, 250);border-radius:6px;min-height:20;}"
+                    "QScrollBar::handle:vertical:hover{background:rgb(147, 115, 238);border-radius:6px;min-height:20;}"
+                    "QScrollBar::add-line:vertical{height:0px;width:0px;}"
+                    "QScrollBar::sub-line:vertical{height:0px;width:0px;}"
+                    "QScrollBar::add-page:vertical,QScrollBar::sub-page:vertical{width:0px;background:rgb(255, 255, 255);}"
+                    );
+    runTextEdit->horizontalScrollBar()->setStyleSheet(
+                    "QScrollBar:horizontal{background:none;height:12px;border-radius:6px}"
+                    "QScrollBar::handle:horizontal{background:rgb(187, 160, 250);border-radius:6px;min-width:20;}"
+                    "QScrollBar::handle:horizontal:hover{background:rgb(147, 115, 238);border-radius:6px;min-width:20;}"
+                    "QScrollBar::add-line:horizontal{height:0px;width:0px;}"
+                    "QScrollBar::sub-line:horizontal{height:0px;width:0px;}"
+                    "QScrollBar::add-page:horizontal,QScrollBar::sub-page:horizontal{height:0px;background:rgb(255, 255, 255);}"
+                    );
 }
 
 void FramelessWindow::setDark()
@@ -351,10 +447,10 @@ void FramelessWindow::setDark()
     menuWidget->setStyleSheet("border:none; border-radius:20px;background-color:rgb(75,75,75)");
 
     fileList->setStyleSheet(
-                    "QListWidget {background-color:rgb(150, 150, 150);outline: 0px;padding: 10px;border: none;border-radius: 20px }"
-                    "QListWidget::item {border: none;border-radius: 15px;padding: 10px;color: rgb(255, 255, 255) }"
-                    "QListWidget::item:hover {background: rgb(110, 110, 110)}"
-                    "QListWidget::item:selected { background: rgb(75, 75, 75);color: white}"
+                    "QTreeView {background-color:rgb(150, 150, 150);outline: 0px;padding: 10px;border: none;border-radius: 20px }"
+                    "QTreeView::item {border: none;border-radius: 15px;padding: 10px;color: rgb(255, 255, 255) }"
+                    "QTreeView::item:hover {background: rgb(110, 110, 110)}"
+                    "QTreeView::item:selected { background: rgb(75, 75, 75);color: white}"
                     );
 
     fileList->verticalScrollBar()->setStyleSheet(
@@ -424,6 +520,36 @@ void FramelessWindow::setDark()
                     "QScrollBar::sub-line:horizontal{height:0px;width:0px;}"
                     "QScrollBar::add-page:horizontal,QScrollBar::sub-page:horizontal{height:0px;background:rgb(100, 100, 100);}"
                     );
+
+    startWidget->setStyleSheet("background-color:rgb(100, 100, 100);border:none; border-radius:20px;");
+
+    startWidget->newButton->setStyleSheet("QPushButton{background-color: rgb(75, 75, 75);color:rgb(255, 255, 255);}"
+                                          "QPushButton::hover{background-color: rgb(110, 110, 110)}"
+                                          "QPushButton::pressed{background-color: rgb(110, 110, 110)}");
+
+    startWidget->openButton->setStyleSheet("QPushButton{background-color: rgb(75, 75, 75);color:rgb(255, 255, 255);}"
+                                          "QPushButton::hover{background-color: rgb(110, 110, 110)}"
+                                          "QPushButton::pressed{background-color: rgb(110, 110, 110)}");
+
+    runTextEdit->setStyleSheet("QPlainTextEdit{background-color:rgb(100, 100, 100);border:none; border-radius:20px;color:rgb(255, 255, 255);"
+                        "selection-background-color:rgb(150,150,150);selection-color:rgb(75, 75, 75);"
+                        "padding: 20px;}");
+    runTextEdit->verticalScrollBar()->setStyleSheet(
+                    "QScrollBar:vertical{background-color:none;width:12px;border-radius:6px}"
+                    "QScrollBar::handle:vertical{background:rgb(110, 110, 110);border-radius:6px;min-height:20;}"
+                    "QScrollBar::handle:vertical:hover{background:rgb(75, 75, 75);border-radius:6px;min-height:20;}"
+                    "QScrollBar::add-line:vertical{height:0px;width:0px;}"
+                    "QScrollBar::sub-line:vertical{height:0px;width:0px;}"
+                    "QScrollBar::add-page:vertical,QScrollBar::sub-page:vertical{width:0px;background:rgb(100, 100, 100);}"
+                    );
+    runTextEdit->horizontalScrollBar()->setStyleSheet(
+                    "QScrollBar:horizontal{background:none;height:12px;border-radius:6px}"
+                    "QScrollBar::handle:horizontal{background:rgb(110, 110, 110);border-radius:6px;min-width:20;}"
+                    "QScrollBar::handle:horizontal:hover{background:rgb(75, 75, 75);border-radius:6px;min-width:20;}"
+                    "QScrollBar::add-line:horizontal{height:0px;width:0px;}"
+                    "QScrollBar::sub-line:horizontal{height:0px;width:0px;}"
+                    "QScrollBar::add-page:horizontal,QScrollBar::sub-page:horizontal{height:0px;background:rgb(100, 100, 100);}"
+                    );
 }
 
 void FramelessWindow::setRed()
@@ -431,10 +557,10 @@ void FramelessWindow::setRed()
     menuWidget->setStyleSheet("border:none; border-radius:20px;background-color:rgb(253, 104, 116)");
 
     fileList->setStyleSheet(
-                    "QListWidget {background-color:rgb(250, 238, 239);outline: 0px;padding: 10px;border: none;border-radius: 20px }"
-                    "QListWidget::item {border: none;border-radius: 15px;padding: 10px;color: rgb(93, 93, 94) }"
-                    "QListWidget::item:hover {background: rgb(253, 142, 151)}"
-                    "QListWidget::item:selected { background: rgb(253, 104, 116);color: white}"
+                    "QTreeView {background-color:rgb(250, 238, 239);outline: 0px;padding: 10px;border: none;border-radius: 20px }"
+                    "QTreeView::item {border: none;border-radius: 15px;padding: 10px;color: rgb(93, 93, 94) }"
+                    "QTreeView::item:hover {background: rgb(253, 142, 151)}"
+                    "QTreeView::item:selected { background: rgb(253, 104, 116);color: white}"
                     );
 
     fileList->verticalScrollBar()->setStyleSheet(
@@ -504,6 +630,36 @@ void FramelessWindow::setRed()
                     "QScrollBar::sub-line:horizontal{height:0px;width:0px;}"
                     "QScrollBar::add-page:horizontal,QScrollBar::sub-page:horizontal{height:0px;background:rgb(255, 255, 255);}"
                     );
+
+    startWidget->setStyleSheet("background-color:rgb(255, 255, 255);border:none; border-radius:20px;");
+
+    startWidget->newButton->setStyleSheet("QPushButton{background-color: rgb(253, 104, 116);color:rgb(255, 255, 255);}"
+                                          "QPushButton::hover{background-color: rgb(253, 142, 151)}"
+                                          "QPushButton::pressed{background-color: rgb(253, 142, 151)}");
+
+    startWidget->openButton->setStyleSheet("QPushButton{background-color: rgb(253, 104, 116);color:rgb(255, 255, 255);}"
+                                          "QPushButton::hover{background-color: rgb(253, 142, 151)}"
+                                          "QPushButton::pressed{background-color: rgb(253, 142, 151)}");
+
+    runTextEdit->setStyleSheet("QPlainTextEdit{background-color:rgb(255, 255, 255);border:none; border-radius:20px;color:rgb(93, 93, 94);"
+                        "selection-background-color:rgb(250, 238, 239);selection-color:rgb(253, 104, 116);"
+                        "padding: 20px;}");
+    runTextEdit->verticalScrollBar()->setStyleSheet(
+                    "QScrollBar:vertical{background-color:none;width:12px;border-radius:6px}"
+                    "QScrollBar::handle:vertical{background:rgb(253, 142, 151);border-radius:6px;min-height:20;}"
+                    "QScrollBar::handle:vertical:hover{background:rgb(253, 104, 116);border-radius:6px;min-height:20;}"
+                    "QScrollBar::add-line:vertical{height:0px;width:0px;}"
+                    "QScrollBar::sub-line:vertical{height:0px;width:0px;}"
+                    "QScrollBar::add-page:vertical,QScrollBar::sub-page:vertical{width:0px;background:rgb(255, 255, 255);}"
+                    );
+    runTextEdit->horizontalScrollBar()->setStyleSheet(
+                    "QScrollBar:horizontal{background:none;height:12px;border-radius:6px}"
+                    "QScrollBar::handle:horizontal{background:rgb(253, 142, 151);border-radius:6px;min-width:20;}"
+                    "QScrollBar::handle:horizontal:hover{background:rgb(253, 104, 116);border-radius:6px;min-width:20;}"
+                    "QScrollBar::add-line:horizontal{height:0px;width:0px;}"
+                    "QScrollBar::sub-line:horizontal{height:0px;width:0px;}"
+                    "QScrollBar::add-page:horizontal,QScrollBar::sub-page:horizontal{height:0px;background:rgb(255, 255, 255);}"
+                    );
 }
 
 void FramelessWindow::setOrange()
@@ -511,10 +667,10 @@ void FramelessWindow::setOrange()
     menuWidget->setStyleSheet("border:none; border-radius:20px;background-color:rgb(250, 140, 22)");
 
     fileList->setStyleSheet(
-                    "QListWidget {background-color:rgb(250, 241, 232);outline: 0px;padding: 10px;border: none;border-radius: 20px }"
-                    "QListWidget::item {border: none;border-radius: 15px;padding: 10px;color: rgb(93, 93, 94) }"
-                    "QListWidget::item:hover {background: rgb(250, 164, 117)}"
-                    "QListWidget::item:selected { background: rgb(250, 140, 22);color: white}"
+                    "QTreeView {background-color:rgb(250, 241, 232);outline: 0px;padding: 10px;border: none;border-radius: 20px }"
+                    "QTreeView::item {border: none;border-radius: 15px;padding: 10px;color: rgb(93, 93, 94) }"
+                    "QTreeView::item:hover {background: rgb(250, 164, 117)}"
+                    "QTreeView::item:selected { background: rgb(250, 140, 22);color: white}"
                     );
 
     fileList->verticalScrollBar()->setStyleSheet(
@@ -585,6 +741,36 @@ void FramelessWindow::setOrange()
                     "QScrollBar::add-page:horizontal,QScrollBar::sub-page:horizontal{height:0px;background:rgb(255, 255, 255);}"
                     );
 
+    startWidget->setStyleSheet("background-color:rgb(255, 255, 255);border:none; border-radius:20px;");
+
+    startWidget->newButton->setStyleSheet("QPushButton{background-color: rgb(250, 140, 22);color:rgb(255, 255, 255);}"
+                                          "QPushButton::hover{background-color: rgb(250, 164, 117)}"
+                                          "QPushButton::pressed{background-color: rgb(250, 164, 117)}");
+
+    startWidget->openButton->setStyleSheet("QPushButton{background-color: rgb(250, 140, 22);color:rgb(255, 255, 255);}"
+                                           "QPushButton::hover{background-color: rgb(250, 164, 117)}"
+                                           "QPushButton::pressed{background-color: rgb(250, 164, 117)}");
+
+    runTextEdit->setStyleSheet("QPlainTextEdit{background-color:rgb(255, 255, 255);border:none; border-radius:20px;color:rgb(93, 93, 94);"
+                        "selection-background-color:rgb(250, 241, 232);selection-color:rgb(250, 140, 22);"
+                        "padding: 20px;}");
+    runTextEdit->verticalScrollBar()->setStyleSheet(
+                    "QScrollBar:vertical{background-color:none;width:12px;border-radius:6px}"
+                    "QScrollBar::handle:vertical{background:rgb(250, 164, 117);border-radius:6px;min-height:20;}"
+                    "QScrollBar::handle:vertical:hover{background:rgb(250, 140, 22);border-radius:6px;min-height:20;}"
+                    "QScrollBar::add-line:vertical{height:0px;width:0px;}"
+                    "QScrollBar::sub-line:vertical{height:0px;width:0px;}"
+                    "QScrollBar::add-page:vertical,QScrollBar::sub-page:vertical{width:0px;background:rgb(255, 255, 255);}"
+                    );
+    runTextEdit->horizontalScrollBar()->setStyleSheet(
+                    "QScrollBar:horizontal{background:none;height:12px;border-radius:6px}"
+                    "QScrollBar::handle:horizontal{background:rgb(250, 164, 117);border-radius:6px;min-width:20;}"
+                    "QScrollBar::handle:horizontal:hover{background:rgb(250, 140, 22);border-radius:6px;min-width:20;}"
+                    "QScrollBar::add-line:horizontal{height:0px;width:0px;}"
+                    "QScrollBar::sub-line:horizontal{height:0px;width:0px;}"
+                    "QScrollBar::add-page:horizontal,QScrollBar::sub-page:horizontal{height:0px;background:rgb(255, 255, 255);}"
+                    );
+
 }
 
 void FramelessWindow::setGreen()
@@ -592,10 +778,10 @@ void FramelessWindow::setGreen()
     menuWidget->setStyleSheet("border:none; border-radius:20px;background-color:rgb(3, 158, 116)");
 
     fileList->setStyleSheet(
-                    "QListWidget {background-color:rgb(230, 242, 239);outline: 0px;padding: 10px;border: none;border-radius: 20px }"
-                    "QListWidget::item {border: none;border-radius: 15px;padding: 10px;color: rgb(93, 93, 94) }"
-                    "QListWidget::item:hover {background: rgb(46, 178, 151)}"
-                    "QListWidget::item:selected { background: rgb(3, 158, 116);color: white}"
+                    "QTreeView {background-color:rgb(230, 242, 239);outline: 0px;padding: 10px;border: none;border-radius: 20px }"
+                    "QTreeView::item {border: none;border-radius: 15px;padding: 10px;color: rgb(93, 93, 94) }"
+                    "QTreeView::item:hover {background: rgb(46, 178, 151)}"
+                    "QTreeView::item:selected { background: rgb(3, 158, 116);color: white}"
                     );
 
     fileList->verticalScrollBar()->setStyleSheet(
@@ -665,6 +851,36 @@ void FramelessWindow::setGreen()
                     "QScrollBar::sub-line:horizontal{height:0px;width:0px;}"
                     "QScrollBar::add-page:horizontal,QScrollBar::sub-page:horizontal{height:0px;background:rgb(255, 255, 255);}"
                     );
+
+    startWidget->setStyleSheet("background-color:rgb(255, 255, 255);border:none; border-radius:20px;");
+
+    startWidget->newButton->setStyleSheet("QPushButton{background-color: rgb(3, 158, 116);color:rgb(255, 255, 255);}"
+                                          "QPushButton::hover{background-color: rgb(46, 178, 151)}"
+                                          "QPushButton::pressed{background-color: rgb(46, 178, 151)}");
+
+    startWidget->openButton->setStyleSheet("QPushButton{background-color: rgb(3, 158, 116);color:rgb(255, 255, 255);}"
+                                           "QPushButton::hover{background-color: rgb(46, 178, 151)}"
+                                           "QPushButton::pressed{background-color: rgb(46, 178, 151)}");
+
+    runTextEdit->setStyleSheet("QPlainTextEdit{background-color:rgb(255, 255, 255);border:none; border-radius:20px;color:rgb(93, 93, 94);"
+                        "selection-background-color:rgb(230, 242, 239);selection-color:rgb(3, 158, 116);"
+                        "padding: 20px;}");
+    runTextEdit->verticalScrollBar()->setStyleSheet(
+                    "QScrollBar:vertical{background-color:none;width:12px;border-radius:6px}"
+                    "QScrollBar::handle:vertical{background:rgb(46, 178, 151);border-radius:6px;min-height:20;}"
+                    "QScrollBar::handle:vertical:hover{background:rgb(3, 158, 116);border-radius:6px;min-height:20;}"
+                    "QScrollBar::add-line:vertical{height:0px;width:0px;}"
+                    "QScrollBar::sub-line:vertical{height:0px;width:0px;}"
+                    "QScrollBar::add-page:vertical,QScrollBar::sub-page:vertical{width:0px;background:rgb(255, 255, 255);}"
+                    );
+    runTextEdit->horizontalScrollBar()->setStyleSheet(
+                    "QScrollBar:horizontal{background:none;height:12px;border-radius:6px}"
+                    "QScrollBar::handle:horizontal{background:rgb(46, 178, 151);border-radius:6px;min-width:20;}"
+                    "QScrollBar::handle:horizontal:hover{background:rgb(3, 158, 116);border-radius:6px;min-width:20;}"
+                    "QScrollBar::add-line:horizontal{height:0px;width:0px;}"
+                    "QScrollBar::sub-line:horizontal{height:0px;width:0px;}"
+                    "QScrollBar::add-page:horizontal,QScrollBar::sub-page:horizontal{height:0px;background:rgb(255, 255, 255);}"
+                    );
 }
 
 void FramelessWindow::setBlue()
@@ -672,10 +888,10 @@ void FramelessWindow::setBlue()
     menuWidget->setStyleSheet("border:none; border-radius:20px;background-color:rgb(0, 195, 238)");
 
     fileList->setStyleSheet(
-                    "QListWidget {background-color:rgb(230, 245, 249);outline: 0px;padding: 10px;border: none;border-radius: 20px }"
-                    "QListWidget::item {border: none;border-radius: 15px;padding: 10px;color: rgb(93, 93, 94) }"
-                    "QListWidget::item:hover {background: rgb(104, 215, 243)}"
-                    "QListWidget::item:selected { background: rgb(0, 195, 238);color: white}"
+                    "QTreeView {background-color:rgb(230, 245, 249);outline: 0px;padding: 10px;border: none;border-radius: 20px }"
+                    "QTreeView::item {border: none;border-radius: 15px;padding: 10px;color: rgb(93, 93, 94) }"
+                    "QTreeView::item:hover {background: rgb(104, 215, 243)}"
+                    "QTreeView::item:selected { background: rgb(0, 195, 238);color: white}"
                     );
 
     fileList->verticalScrollBar()->setStyleSheet(
@@ -739,6 +955,37 @@ void FramelessWindow::setBlue()
                     "QScrollBar::add-page:vertical,QScrollBar::sub-page:vertical{width:0px;background:rgb(255, 255, 255);}"
                     );
     plainTextEdit->horizontalScrollBar()->setStyleSheet(
+                    "QScrollBar:horizontal{background:none;height:12px;border-radius:6px}"
+                    "QScrollBar::handle:horizontal{background:rgb(104, 215, 243);border-radius:6px;min-width:20;}"
+                    "QScrollBar::handle:horizontal:hover{background:rgb(0, 195, 238);border-radius:6px;min-width:20;}"
+                    "QScrollBar::add-line:horizontal{height:0px;width:0px;}"
+                    "QScrollBar::sub-line:horizontal{height:0px;width:0px;}"
+                    "QScrollBar::add-page:horizontal,QScrollBar::sub-page:horizontal{height:0px;background:rgb(255, 255, 255);}"
+                    );
+
+    startWidget->setStyleSheet("background-color:rgb(255, 255, 255);border:none; border-radius:20px;");
+
+    startWidget->newButton->setStyleSheet("QPushButton{background-color: rgb(0, 195, 238);color:rgb(255, 255, 255);}"
+                                          "QPushButton::hover{background-color: rgb(104, 215, 243)}"
+                                          "QPushButton::pressed{background-color: rgb(104, 215, 243)}");
+
+    startWidget->openButton->setStyleSheet("QPushButton{background-color: rgb(0, 195, 238);color:rgb(255, 255, 255);}"
+                                           "QPushButton::hover{background-color: rgb(104, 215, 243)}"
+                                           "QPushButton::pressed{background-color: rgb(104, 215, 243)}");
+
+    runTextEdit->setStyleSheet("QPlainTextEdit{background-color:rgb(255, 255, 255);border:none; border-radius:20px;color:rgb(93, 93, 94);"
+                        "selection-background-color:rgb(230, 245, 249);selection-color:rgb(0, 195, 238);"
+                        "padding: 20px;}");
+
+    runTextEdit->verticalScrollBar()->setStyleSheet(
+                    "QScrollBar:vertical{background-color:none;width:12px;border-radius:6px}"
+                    "QScrollBar::handle:vertical{background:rgb(104, 215, 243);border-radius:6px;min-height:20;}"
+                    "QScrollBar::handle:vertical:hover{background:rgb(0, 195, 238);border-radius:6px;min-height:20;}"
+                    "QScrollBar::add-line:vertical{height:0px;width:0px;}"
+                    "QScrollBar::sub-line:vertical{height:0px;width:0px;}"
+                    "QScrollBar::add-page:vertical,QScrollBar::sub-page:vertical{width:0px;background:rgb(255, 255, 255);}"
+                    );
+    runTextEdit->horizontalScrollBar()->setStyleSheet(
                     "QScrollBar:horizontal{background:none;height:12px;border-radius:6px}"
                     "QScrollBar::handle:horizontal{background:rgb(104, 215, 243);border-radius:6px;min-width:20;}"
                     "QScrollBar::handle:horizontal:hover{background:rgb(0, 195, 238);border-radius:6px;min-width:20;}"

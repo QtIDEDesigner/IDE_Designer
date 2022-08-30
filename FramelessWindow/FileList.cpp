@@ -2,49 +2,10 @@
 #include<QMessageBox>
 #include<QFileDialog>
 #include<QTextStream>
-FileList::FileList(QListWidget *parent) : QListWidget(parent)
+FileList::FileList(QTreeWidget *parent) : QTreeWidget(parent)
 {
     // setAttribute(Qt::WA_StyledBackground, true);
-    this->addItem("fileName");
-    this->addItem("fileName");
-    this->addItem("fileName");
-    this->addItem("fileName");
-    this->addItem("fileName");
-    this->addItem("fileName");
-    this->addItem("fileName");
-    this->addItem("fileName");
-    this->addItem("fileName");
-    this->addItem("fileName");
-    this->addItem("fileName");
-    this->addItem("fileName");
-    this->addItem("fileName");
-    this->addItem("fileName");
-    this->addItem("fileName");
-    this->addItem("fileName");
-    this->addItem("fileName");
-    this->addItem("fileName");
-    this->addItem("fileName");
-    this->addItem("fileName");
-    this->addItem("fileName");
-    this->addItem("fileName");
-    this->addItem("fileName");
-    this->addItem("fileName");
-    this->addItem("fileName");
-    this->addItem("fileName");
-    this->addItem("fileName");
-    this->addItem("fileName");
-    this->addItem("fileName");
-    this->addItem("fileName");
-    this->addItem("fileName");
-    this->addItem("fileName");
-    this->addItem("fileName");
-    this->addItem("fileName");
-    this->addItem("fileName");
-    this->addItem("fileName");
-    this->addItem("fileName");
-    this->addItem("fileName");
-    this->addItem("fileName");
-    this->addItem("fileName");
+
 
     QFont fileListFont("Microsoft YaHei", 10, 50);
 
@@ -103,15 +64,16 @@ bool FileList::MaybeSave(){
     }
     return false;
 }
-void FileList::loadFile(const QString &filename){
+bool FileList::loadFile(const QString &filename){
     QFile file(filename);
     if(!file.open(QFile::ReadOnly|QFile::Text)){//打开文件失败
         QMessageBox::warning(this,tr("Error"),tr("Open File failed"));
+        return false;
     }
     QTextStream streamin(&file);
     emit(LoadData(streamin.readAll()));//向编辑区发送从文件中获取的内容
-
     setCurrentFile(filename);//重置当前文件信息
+    return true;
 }
 
 void FileList::OpenFile(){
@@ -121,6 +83,14 @@ void FileList::OpenFile(){
         if(!path.isEmpty())//已选择文件
             loadFile(path);
     }
+}
+
+bool FileList::openStartFile(){
+
+    QString path=QFileDialog::getOpenFileName(this,tr("打开文件"),tr(""),tr("C source files(*.c)"));
+    if(!path.isEmpty())//已选择文件
+        return loadFile(path);
+    return false;
 }
 bool FileList::Save(){
     if(currentFile.isEmpty()){//新建文件，先另存
@@ -147,12 +117,17 @@ bool FileList::SaveFile(const QString &filename){
 }
 void FileList::NewFile(){
     if(MaybeSave()){//新建文件前先保存
-
         emit(ClearText());//发送清空编辑区信号
         setCurrentFile("");
     }
-
 }
+
+void FileList::newStartFile()
+{
+    emit(ClearText());//发送清空编辑区信号
+    setCurrentFile("");
+}
+
 bool FileList::SaveAs(){
 //    QFileDialog dialog(this);
 //    dialog.setWindowModality(Qt::WindowModal);

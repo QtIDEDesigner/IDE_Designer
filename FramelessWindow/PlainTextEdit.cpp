@@ -1,5 +1,12 @@
 #include "PlainTextEdit.h"
-
+#include<QDebug>
+static QVector<QPair<QString, QString>> parentheses = {
+    {"(", ")"},
+    {"{", "}"},
+    {"[", "]"},
+    {"\"", "\""},
+    {"'", "'"}
+};
 PlainTextEdit::PlainTextEdit(QPlainTextEdit *parent) : QPlainTextEdit(parent)
 {
     QFont codeFont("Consolas", 12, 2);
@@ -8,16 +15,18 @@ PlainTextEdit::PlainTextEdit(QPlainTextEdit *parent) : QPlainTextEdit(parent)
 //                            "padding: 20px;}");
     this->setFont(codeFont);
     this->setLineWrapMode(LineWrapMode::NoWrap);
-
     //
     codeLineArea = new CodeLineArea(this);
 
     connect(this, SIGNAL(blockCountChanged(int)), this, SLOT(updateCodeLineAreaWidth(int)));
     connect(this, SIGNAL(updateRequest(QRect,int)), this, SLOT(updateCodeLineArea(QRect,int)));
-    connect(this, SIGNAL(cursorPositionChanged()), this, SLOT(highlightCurrentLine()));
-
+//    connect(this, SIGNAL(cursorPositionChanged()), this, SLOT(highlightParentheses()));
+//    connect(this,SIGNAL(cursorPositionChanged()),this,SLOT(highlightCurrentLine()));
+    connect(this,SIGNAL(cursorPositionChanged()),this,SLOT(updateExtraSelection()));
     updateCodeLineAreaWidth(0);
-    highlightCurrentLine();
+    updateExtraSelection();
+
+
 }
 void PlainTextEdit::SendTextToFile(){//编辑发送文本内容至文件
     QString Text=this->toPlainText();
@@ -43,6 +52,7 @@ int PlainTextEdit::codeLineAreaWidth()
 void PlainTextEdit::updateCodeLineAreaWidth(int /* newBlockCount */)
 {
     setViewportMargins(codeLineAreaWidth(), 0, 0, 0);
+
 }
 
 
@@ -68,12 +78,12 @@ void PlainTextEdit::resizeEvent(QResizeEvent *e)
 
 // resizeEvent
 // cursorPositionChanged
-void PlainTextEdit::highlightCurrentLine()
+void PlainTextEdit::highlightCurrentLine(QList<QTextEdit::ExtraSelection>& extraSelections)
 {
-    QList<QTextEdit::ExtraSelection> extraSelections;
+    //QList<QTextEdit::ExtraSelection> extraSelections;
 
     if (!isReadOnly()) {
-        QTextEdit::ExtraSelection selection;
+        QTextEdit::ExtraSelection selection{};
 
         QColor lightPurple;
         lightPurple.setRgb(200, 200, 200);
@@ -85,7 +95,7 @@ void PlainTextEdit::highlightCurrentLine()
         extraSelections.append(selection);
     }
 
-    setExtraSelections(extraSelections);
+   // setExtraSelections(extraSelections);
 }
 
 
@@ -118,4 +128,128 @@ void PlainTextEdit::codeLineAreaPaintEvent(QPaintEvent *event)
         ++blockNumber;
     }
 
+}
+
+void PlainTextEdit::updateExtraSelection()
+{
+    QList<QTextEdit::ExtraSelection> extra;
+    highlightCurrentLine(extra);
+    highlightParentheses(extra);
+    setExtraSelections(extra);
+}
+
+void PlainTextEdit::highlightParentheses(QList<QTextEdit::ExtraSelection>& extraSelection)
+{
+    auto currentSymbol = charUnderCursor();
+    auto prevSymbol = charUnderCursor(-1);
+   // QList<QTextEdit::ExtraSelection> extraSelection;
+
+    for (auto& pair : parentheses)
+    {
+        int direction;
+
+        QChar counterSymbol;
+        QChar activeSymbol;
+        auto position = textCursor().position();
+
+        if (pair.first == currentSymbol)
+        {
+            direction = 1;
+            counterSymbol = pair.second[0];
+            activeSymbol = currentSymbol;
+        }
+        else if (pair.second == prevSymbol)
+        {
+            direction = -1;
+            counterSymbol = pair.first[0];
+            activeSymbol = prevSymbol;
+            position--;
+        }
+        else
+        {
+            continue;
+        }
+
+        auto counter = 1;
+
+        while (counter != 0 &&
+               position > 0 &&
+               position < (document()->characterCount() - 1))
+        {
+            //qDebug()<<position<<document()->characterCount();
+            // Moving position
+            position += direction;
+
+            auto character = document()->characterAt(position);
+            // Checking symbol under position
+            if (character == activeSymbol)
+            {
+                ++counter;
+            }
+            else if (character == counterSymbol)
+            {
+                --counter;
+            }
+        }
+
+        QColor color; color.setRgb(240,161,168);
+
+        // Found
+        if (counter == 0)
+        {
+            QTextEdit::ExtraSelection selection{};
+
+            auto directionEnum =
+                 direction < 0 ?
+                 QTextCursor::MoveOperation::Left
+                 :
+                 QTextCursor::MoveOperation::Right;
+            selection.format.setFontWeight(5);
+            selection.format.setBackground(color);
+            selection.cursor = textCursor();
+            selection.cursor.clearSelection();
+            selection.cursor.movePosition(
+                directionEnum,
+                QTextCursor::MoveMode::MoveAnchor,
+                std::abs(textCursor().position() - position)
+            );
+
+            selection.cursor.movePosition(
+                QTextCursor::MoveOperation::Right,
+                QTextCursor::MoveMode::KeepAnchor,
+                1
+            );
+
+            extraSelection.append(selection);
+
+            selection.cursor = textCursor();
+            selection.cursor.clearSelection();
+            selection.cursor.movePosition(
+                directionEnum,
+                QTextCursor::MoveMode::KeepAnchor,
+                1
+            );
+
+            extraSelection.append(selection);
+        }
+
+        break;
+    }
+    //setExtraSelections(extraSelection);
+}
+
+QChar PlainTextEdit::charUnderCursor(int offset) const
+{
+    auto block = textCursor().blockNumber();
+    auto index = textCursor().positionInBlock();
+    auto text = document()->findBlockByNumber(block).text();
+
+    index += offset;
+
+    if (index < 0 || index >= text.size())
+    {
+        return {};
+    }
+
+    return text[index];
 }
